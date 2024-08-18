@@ -1,0 +1,34 @@
+﻿@using Domin.Model;
+@model List<UrlModel>
+
+@{
+    ViewData["Title"] = "URL List";
+}
+
+<h1>URL List</h1>
+
+<p>
+    <a href="@Url.Action("Create")">Create New</a>
+</p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>URL</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var url in Model)
+        {
+            <tr>
+                <td>@url.Id</td>
+                <td>@url.Url</td>
+                <td>
+                    <a href="@Url.Action("Delete", new { id = url.Id })">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

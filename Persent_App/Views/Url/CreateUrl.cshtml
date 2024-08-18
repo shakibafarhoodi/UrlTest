@@ -1,0 +1,267 @@
+﻿@using Domin.Model
+@model CreateUrlViewModel
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Dynamic URL Table</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="~/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css">
+    <link href="~/css/indexStyle.css" rel="stylesheet">
+    <style>
+        .form-container {
+            border: 1px solid #3f51b575;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 20px;
+        }
+
+        .upload-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+
+        .upload-button {
+            width: 48%;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .dropdown-container {
+            position: relative;
+        }
+
+            .dropdown-container select {
+                width: 100%;
+                padding-right: 30px;
+                -webkit-appearance: none;
+                -moz-appearance: none;
+                appearance: none;
+            }
+
+            .dropdown-container .dropdown-icon {
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                pointer-events: none;
+                color: #3F51B5;
+                margin-top: 10px;
+            }
+
+        .floating-menu {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .circle {
+            width: 60px;
+            height: 60px;
+            background-color: #3b5998;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .hamburger {
+            width: 30px;
+            height: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .bar {
+            width: 100%;
+            height: 4px;
+            background-color: white;
+        }
+
+        nav.nav {
+            display: none;
+        }
+
+        #toggle:checked ~ nav.nav {
+            display: block;
+        }
+
+        #toggle {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="table-container">
+            <div class="row" style="margin-top:20px;">
+                <div class="col-sm-12"><h3>URL Table</h3></div>
+            </div>
+            <br />
+            <div id="successMessage" class="alert alert-success" style="display:none;"></div>
+            <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
+            <form id="urlForm" method="post" class="contact-us-form form-container" enctype="multipart/form-data">
+                <div class="form-group dropdown-container">
+                    <label for="inputType">Select Input Type</label>
+                    <select id="inputType" class="form-control">
+                        <option value="">Choose...</option>
+                        <option value="url">URL</option>
+                        <option value="image">Image</option>
+                    </select>
+                    <i class="ri-arrow-down-s-line dropdown-icon"></i>
+                </div>
+                <div id="formFields" class="hidden">
+                    <div class="form-group">
+                        <input asp-for="Url" type="text" id="urlInput" class="form-control" placeholder="Enter URL">
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="ImgFile" type="file" id="imgInput" class="form-control" placeholder="Upload Image">
+                    </div>
+                    <div class="form-group">
+                        <input asp-for="Time" type="number" id="timeInput" class="form-control" placeholder="Enter time in milliseconds" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="priorityInput">Priority</label>
+                        <input asp-for="Priority" type="number" id="priorityInput" class="form-control" placeholder="Enter Priority">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary" style="background-color:#3F51B5;width:100px;">Add</button>
+                </div>
+                <span asp-validation-for="Url" class="text-danger"></span>
+                <span asp-validation-for="Time" class="text-danger"></span>
+                <div id="validationMessage" class="error-message"></div>
+            </form>
+            <div id="listUrlComponentContainer">
+                @await Component.InvokeAsync("ListUrlComponent")
+            </div>
+        </div>
+    </div>
+    <div class="floating-menu">
+        <input type="checkbox" id="toggle" />
+        <label class="circle" for="toggle">
+            <div class="hamburger">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </label>
+        <nav class="nav">
+            <ul>
+                <li><a asp-controller="Url" asp-action="index" class="pulse"><i class="ri-home-line"></i></a></li>
+                @*                <li><a asp-controller="Url" asp-action="CreateUrl" class="ri-settings-3-line"></a></li>
+                *@@*                <li><a href="#0"><i class="ri-send-plane-2-line"></i></a></li>
+                *@
+            </ul>
+        </nav>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#inputType').change(function () {
+                var selectedValue = $(this).val();
+                if (selectedValue) {
+                    $('#formFields').removeClass('hidden');
+                    if (selectedValue == 'url') {
+                        $('#urlInput').show();
+                        $('#imgInput').hide();
+                    } else {
+                        $('#urlInput').hide();
+                        $('#imgInput').show();
+                    }
+                } else {
+                    $('#formFields').addClass('hidden');
+                }
+            });
+
+            $('#urlForm').on('submit', function (e) {
+                e.preventDefault(); // جلوگیری از ارسال فرم به صورت عادی
+
+                var inputType = $('#inputType').val();
+                var urlInput = $('#urlInput').val();
+                var timeInput = $('#timeInput').val();
+                var imgFile = $('#imgInput')[0].files[0];
+                var priorityInput = $('#priorityInput').val();
+                var validationMessage = $('#validationMessage');
+                var successMessage = $('#successMessage');
+                var errorMessage = $('#errorMessage');
+
+                var formData = new FormData();
+                formData.append("Time", timeInput);
+                formData.append("Priority", priorityInput)
+                if (inputType == 'url') {
+                    formData.append("Url", urlInput);
+                } else {
+                    formData.append("ImgFile", imgFile);
+                }
+
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("CreateUrl", "Url")',
+                    data: formData,
+                    contentType: false, // این تنظیمات ضروری است
+                    processData: false, // این تنظیمات ضروری است
+                    success: function (response) {
+                        if (response.success) {
+                            successMessage.text(response.message).show();
+                            errorMessage.hide();
+                            setTimeout(function () {
+                                successMessage.fadeOut();
+                            }, 3000); // پیام موفقیت پس از 3 ثانیه محو می‌شود
+
+                            // به روز رسانی لیست URL‌ها با استفاده از کامپوننت ListUrlComponent
+                            refreshUrlList();
+                        } else {
+                            errorMessage.text(response.message).show();
+                            successMessage.hide();
+                            setTimeout(function () {
+                                errorMessage.fadeOut();
+                            }, 3000); // پیام خطا پس از 3 ثانیه محو می‌شود
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        errorMessage.text("An error occurred while processing your request. Please try again.").show();
+                        successMessage.hide();
+                        setTimeout(function () {
+                            errorMessage.fadeOut();
+                        }, 3000); // پیام خطا پس از 3 ثانیه محو می‌شود
+                    }
+                });
+
+                function refreshUrlList() {
+                    // این تابع برای به روز رسانی لیست URL‌ها از کامپوننت ListUrlComponent استفاده می‌کند
+                    $.ajax({
+                        type: 'GET',
+                        url: '@Url.Action("ListUrlComponent", "Url")',
+                        success: function (result) {
+                            $('#listUrlComponentContainer').html(result);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error refreshing URL list:", error);
+                        }
+                    });
+                }
+
+                // پاک کردن فیلدهای فرم
+                $('#urlInput').val('');
+                $('#imgInput').val('');
+                $('#timeInput').val('');
+                $('#priorityInput').val('');
+
+            });
+
+            // پاک کردن محتوا پس از کلیک روی فیلدها
+            $('#urlInput, #timeInput, #imgInput').on('click', function () {
+                $(this).val('');
+            });
+        });
+    </script>
+</body>
+</html>

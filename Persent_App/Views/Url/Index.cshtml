@@ -1,0 +1,187 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Smooth backdrop filter on sticky navigation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="~/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css">
+    <link href="~/css/indexStyle.css" rel="stylesheet" />
+    <style>
+        #errorMessage {
+            display: none;
+            color: red;
+        }
+
+        .content-frame {
+            margin-top: 20px;
+            display: none;
+            width: 100%;
+            height: 700px;
+        }
+
+            .content-frame.active {
+                display: block;
+            }
+
+        .floating-menu {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+        }
+
+        .circle {
+            width: 60px;
+            height: 60px;
+            background-color: #3b5998; /* Adjust the color as needed */
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            margin-left: 2px;
+        }
+
+        .hamburger {
+            width: 30px;
+            height: 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .bar {
+            width: 100%;
+            height: 4px;
+            background-color: white; /* Adjust the color as needed */
+        }
+
+        nav.nav {
+            display: none;
+        }
+
+        #toggle:checked ~ nav.nav {
+            display: block;
+        }
+
+        #toggle {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <iframe id="urlFrame" class="content-frame" src="" title="URL Rotator"></iframe>
+    <img id="imageFrame" class="content-frame" src="" alt="Image Rotator">
+    <div id="errorMessage" class="error-message">شما نمی‌توانید این URL را مشاهده کنید!</div>
+    <div id="currentUrl"></div>
+
+    <div class="floating-menu">
+        <input type="checkbox" id="toggle" />
+        <label class="circle" for="toggle">
+            <div class="hamburger">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </label>
+        <nav class="nav">
+            <ul>
+                <li><a asp-controller="Url" asp-action="index" class="pulse"><i class="ri-home-line"></i></a></li>
+                <li><a asp-controller="Url" asp-action="CreateUrl" class="ri-settings-3-line"></a></li>
+@*                <li><a href="#0"><i class="ri-send-plane-2-line"></i></a></li>
+*@            </ul>
+        </nav>
+    </div>
+
+    <script>
+        let contents = [];
+        let currentIndex = 0;
+        let intervalId;
+        let timeLeft;
+        let loadTimeout;
+
+        async function fetchContents() {
+            try {
+                const response = await fetch('/Url/GetContents', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                if (response.ok) {
+                    contents = await response.json();
+                    console.log('Contents fetched:', contents);
+                    startRotation();
+                } else {
+                    console.error('Failed to fetch contents', response.status, response.statusText);
+                }
+            } catch (error) {
+                console.error('Error fetching contents:', error.message);
+            }
+        }
+
+        function startRotation() {
+            if (contents.length > 0) {
+                loadContent();
+            } else {
+                console.error('No contents to rotate');
+            }
+        }
+
+        function loadContent() {
+            if (intervalId) {
+                clearInterval(intervalId);
+            }
+            clearTimeout(loadTimeout);
+
+            const currentContent = contents[currentIndex];
+            if (currentContent.type === 'url') {
+                loadUrl(currentContent);
+            } else if (currentContent.type === 'image') {
+                loadImage(currentContent);
+            }
+
+            timeLeft = currentContent.time / 1000;
+
+            intervalId = setInterval(() => {
+                timeLeft--;
+                if (timeLeft <= 0) {
+                    clearInterval(intervalId);
+                    currentIndex = (currentIndex + 1) % contents.length;
+                    loadContent();
+                }
+            }, 1000);
+        }
+
+        function loadUrl(content) {
+            document.getElementById('imageFrame').classList.remove('active');
+            const urlFrame = document.getElementById('urlFrame');
+            urlFrame.classList.add('active');
+            urlFrame.src = content.url.startsWith('http') ? content.url : `https://${content.url}`;
+            urlFrame.src = urlFrame.src.replace(/([^:]\/)\/+/g, "$1"); // اصلاح اسلش‌های متوالی
+            document.getElementById('errorMessage').style.display = 'none';
+
+            loadTimeout = setTimeout(() => {
+                const iframe = document.getElementById('urlFrame');
+                if (iframe.contentDocument && iframe.contentDocument.body && iframe.contentDocument.body.innerHTML.includes('refused to connect')) {
+                    showErrorMessage();
+                }
+            }, 5000); // 5 seconds timeout to check if the URL loaded correctly
+        }
+
+        function loadImage(content) {
+            document.getElementById('urlFrame').classList.remove('active');
+            const imageFrame = document.getElementById('imageFrame');
+            imageFrame.classList.add('active');
+            imageFrame.src = content.url;
+        }
+
+        function showErrorMessage() {
+            document.getElementById('errorMessage').style.display = 'block';
+            document.getElementById('urlFrame').classList.remove('active');
+        }
+
+        window.onload = fetchContents;
+    </script>
+</body>
+</html>
