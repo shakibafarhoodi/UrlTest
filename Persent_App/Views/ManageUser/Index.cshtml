@@ -1,0 +1,119 @@
+﻿@using web.ViewModel;
+@model List<ManageUserViewModel>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table without Drag and Drop</title>
+    <style>
+
+        .empty-cell {
+            text-align: center;
+            font-size: 1.5em; /* Reduced font size */
+            color: #3b5998;
+        }
+
+        /* Adding border to draggable items */
+        .draggable-item {
+            border: 2px dashed #3F51B5;
+            background-color: #f0f8ff;
+        }
+
+        /* Styling the table */
+        .table {
+            border-collapse: collapse;
+            width: 80%;
+            text-align: center;
+            margin-top:100px;
+        }
+
+            .table th, .table td {
+                padding: 10px; /* Adjusted padding */
+                font-size: 0.9em; /* Smaller font size for table content */
+            }
+
+        /* New class for the plus icon button */
+        .icon-buttonPluse {
+            color: blue;
+            font-size: 1.5em; /* Adjusted icon size */
+            text-decoration: none; /* Remove underline */
+        }
+
+        /* New class for the remove icon button */
+        .icon-button {
+            color: red; /* Change color for remove action */
+            font-size: 20px; /* Adjusted icon size */
+            text-decoration: none; /* Remove underline */
+        }
+
+        /* New class to center the icons */
+        .action-cell {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px; /* Increased gap between buttons for better spacing */
+        }
+
+        .separator {
+            padding: 0 5px; /* Reduced space for the separator */
+        }
+    </style>
+</head>
+<body>
+    @if (!Model.Any())
+    {
+        <h1>کاربری یافت نشد</h1>
+    }
+    else
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>UserName</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="RoleTableBody">
+                @foreach (var url in Model)
+                {
+                    <tr id="row-@url.Id" data-id="@url.Id">
+                        <td>@url.UserName</td>
+                        <td>@url.Email</td>
+                        <td class="action-cell">
+                            <input type="hidden" value="@url.Id" class="url-id" />
+                            <a asp-controller="ManageUser" asp-action="AddUserToRole" asp-route-id="@url.Id"
+                               class="icon-buttonPluse" title="Add Role"><i class="far fa-cog">+</a>
+                            <span class="separator">|</span> <!-- Separator -->
+                            <a asp-controller="ManageUser" asp-action="RemoveUserFromRole" asp-route-id="@url.Id"
+                               class="icon-button" title="Remove User From Role"><i class="far fa-cog">x</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <form method="post" asp-controller="ManageUser" asp-action="RemoveUserFromRole" id="deleteUrlForm">
+            @Html.AntiForgeryToken()
+        </form>
+
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+
+        <script>
+            function replaceEmptyCells() {
+                const cells = document.querySelectorAll('#RoleTableBody td');
+                cells.forEach(cell => {
+                    if (cell.textContent.trim() === '') {
+                        cell.textContent = '-';
+                        cell.classList.add('empty-cell');
+                    }
+                });
+            }
+
+            document.addEventListener('DOMContentLoaded', replaceEmptyCells);
+        </script>
+    }
+</body>
+</html>

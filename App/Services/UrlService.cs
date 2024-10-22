@@ -1,8 +1,9 @@
 ﻿using Data.Repository;
 using Domin.InterFaceRepository;
 using Domin.Model;
+using Domin.ViewModel;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Persent_App.Views.Url;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,6 +16,7 @@ namespace App.Services
     public class UrlService : IUrlService
     {
         private readonly IUrlRepository _urlRepository;
+        //private readonly UserManager<UserModel> _userManager;
 
         public UrlService(IUrlRepository urlRepository)
         {
@@ -35,7 +37,7 @@ namespace App.Services
             return urls.OrderBy(u => u.Priority).ToList();
         }
 
-        public async Task<ResultUrl> CreateUrl(CreateUrlViewModel model)
+        public async Task<ResultUrl> CreateUrl(CreateUrlViewModel model, string userId)
         {
             if (model == null || (string.IsNullOrEmpty(model.Url) && model.ImgFile == null))
             {
@@ -87,8 +89,26 @@ namespace App.Services
                     }
                 }
 
-                await _urlRepository.AddAsync(urlModel);
-                await _urlRepository.SaveAsync(urlModel);
+                //await _urlRepository.AddAsync(urlModel);
+                //await _urlRepository.SaveAsync(urlModel);
+
+
+                //var user = await _userManager.FindByIdAsync(userId);
+                //if (user == null)
+                //{
+                //    return ResultUrl.notfound; // کاربر پیدا نشد
+                //}
+
+                //// ایجاد رابطه بین کاربر و URL
+                ////user.Urls.Add(urlModel);
+
+                //// به‌روزرسانی اطلاعات کاربر در دیتابیس
+                //await _userManager.UpdateAsync(user);
+
+                //return ResultUrl.Success;
+
+
+
                 return ResultUrl.Success;
             }
 

@@ -1,0 +1,18 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+<div class="text-center">
+    @if (ViewBag.IsConfirmed)
+    {
+        <div class="alert alert-success">
+        دسترسی به این سایت ندارید     
+        </div>
+        <p><a asp-action="Login" asp-controller="Account">Login to web site</a></p>
+    }
+    else
+    {
+        <div class="alert alert-danger">
+            حساب کاربری شما تایید نشد
+        </div>
+    }
+</div>

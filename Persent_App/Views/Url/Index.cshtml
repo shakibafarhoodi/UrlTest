@@ -5,32 +5,44 @@
     <title>Smooth backdrop filter on sticky navigation</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="~/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css">
-    <link href="~/css/indexStyle.css" rel="stylesheet" />
+   @* <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css">
+    <link href="~/css/indexStyle.css" rel="stylesheet" />*@
+
+
+    <link rel='stylesheet' href='https://pro.fontawesome.com/releases/v5.2.0/css/all.css'>
+    <link rel="stylesheet" href="~/css/Css_Importent/style.css">
     <style>
-        #errorMessage {
-            display: none;
-            color: red;
+        body, html {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
 
         .content-frame {
-            margin-top: 20px;
             display: none;
             width: 100%;
-            height: 700px;
+            height: auto;
+            max-width: 100%; /* حداکثر عرض برای iframe */
+            max-height: 100%; /* حداکثر ارتفاع برای iframe */
+            min-width: 900px; /* حداقل عرض برای جلوگیری از کوچک شدن بیش از حد */
+            min-height: 600px; /* حداقل ارتفاع برای جلوگیری از کوچک شدن بیش از حد */
+            border: none;
+            object-fit: contain;
         }
 
             .content-frame.active {
                 display: block;
             }
 
-        .floating-menu {
+      /*  .floating-menu {
             position: fixed;
             bottom: 20px;
             left: 20px;
-        }
+        }*/
 
-        .circle {
+      /*  .circle {
             width: 60px;
             height: 60px;
             background-color: #3b5998; /* Adjust the color as needed */
@@ -40,59 +52,49 @@
             justify-content: center;
             cursor: pointer;
             margin-left: 2px;
-        }
+        }*/
 
-        .hamburger {
+       /* .hamburger {
             width: 30px;
             height: 24px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-        }
+        }*/
 
-        .bar {
+      /*  .bar {
             width: 100%;
             height: 4px;
             background-color: white; /* Adjust the color as needed */
-        }
+        }*/
 
-        nav.nav {
+      /*  nav.nav {
             display: none;
-        }
+        }*/
 
-        #toggle:checked ~ nav.nav {
+       /* #toggle:checked ~ nav.nav {
             display: block;
-        }
+        }*/
 
-        #toggle {
+     /*   #toggle {
             display: none;
-        }
+        }*/
     </style>
 </head>
 <body>
     <iframe id="urlFrame" class="content-frame" src="" title="URL Rotator"></iframe>
     <img id="imageFrame" class="content-frame" src="" alt="Image Rotator">
-    <div id="errorMessage" class="error-message">شما نمی‌توانید این URL را مشاهده کنید!</div>
     <div id="currentUrl"></div>
 
-    <div class="floating-menu">
+    <div class="wrapper">
         <input type="checkbox" id="toggle" />
-        <label class="circle" for="toggle">
-            <div class="hamburger">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-        </label>
-        <nav class="nav">
-            <ul>
-                <li><a asp-controller="Url" asp-action="index" class="pulse"><i class="ri-home-line"></i></a></li>
-                <li><a asp-controller="Url" asp-action="CreateUrl" class="ri-settings-3-line"></a></li>
-@*                <li><a href="#0"><i class="ri-send-plane-2-line"></i></a></li>
-*@            </ul>
-        </nav>
+        <label for="toggle" class="fab"><img src="../css/Css_Importent/png_3qj3h.png" alt="FAB Icon"></label>
+        <div class="fac">
+            <a asp-controller="Url" asp-action="index"><i class="fas fa-home"></i></a>
+            <a asp-controller="Url" asp-action="CreateUrl"><i class="far fa-cog"></i></a>
+@*            <a href="#"><i class="fas fa-user"></i></a>
+*@        </div>
     </div>
-
     <script>
         let contents = [];
         let currentIndex = 0;

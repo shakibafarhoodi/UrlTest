@@ -1,0 +1,67 @@
+﻿@using web.ViewModel;
+@model AddUserToRoleViewModel
+@{
+    ViewData["Title"] = "DeleteUserToRole";
+}
+<link href="~/assest/themeaddusertorole/style.css" rel="stylesheet" />
+@*<h1>DeleteUserToRole</h1>
+*@
+@*    <div asp-validation-summary="ModelOnly"></div>
+    @if (!Model.UserRoles.Any())
+    {
+        <h1>هیچ مقامی یافت نشد</h1>
+    }
+    else
+    {
+        for (int i = 0; i < Model.UserRoles.Count; i++)
+        {
+            <div class="form-group">
+                <input asp-for="@Model.UserRoles[i].IsSelected" />
+                <label>@Model.UserRoles[i].RoleName</label>
+
+                <input type="hidden" asp-for="@Model.UserRoles[i].RoleName" />
+            </div>
+        }
+    }
+
+    <input type="hidden" asp-for="@Model.UserId" />
+    <button class="btn btn-primary" type="submit">Submit</button>
+*@
+
+
+<div class="wrapper">
+    <div class="grid">
+        <form asp-controller="ManageUser" asp-action="RemoveUserFromRole" method="post" style="border: 1px solid #000;">
+            <div asp-validation-summary="ModelOnly"></div>
+
+            @if (!Model.UserRoles.Any())
+            {
+                <h1>هیچ مقامی یافت نشد</h1>
+            }
+            else
+            {
+                <input type="hidden" asp-for="UserId" />
+                <h5>
+                    DeleteUserToRole
+                </h5>
+                for (int i = 0; i < Model.UserRoles.Count; i++)
+                {
+
+                    <fieldset>
+
+                        <div class="form__group">
+                            <input type="checkbox" asp-for="@Model.UserRoles[i].IsSelected" >
+                            <input type="hidden" asp-for="@Model.UserRoles[i].RoleName" />
+                            <label for="UserRoles[@i].IsSelected" name="UserRoles[@i].RoleName">@Model.UserRoles[i].RoleName</label>
+                        </div>
+
+                    </fieldset>
+
+
+                }
+                <button type="submit">Delet Roles</button>
+            }
+           
+        </form>
+    </div>
+</div>

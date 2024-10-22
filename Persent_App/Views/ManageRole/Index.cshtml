@@ -1,0 +1,41 @@
+﻿@using Domin.ViewModel
+@model List<MangerRoleViewModel>
+
+<h2>Manage Roles</h2>
+
+@if (ViewData["SuccessMessage"] != null)
+{
+    <div class="alert alert-success">@ViewData["SuccessMessage"]</div>
+}
+@if (ViewData["ErrorMessage"] != null)
+{
+    <div class="alert alert-danger">@ViewData["ErrorMessage"]</div>
+}
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Role Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <legend>Select Your Subjects:</legend>
+
+        @foreach (var role in Model)
+        {
+            <tr>
+                <td>@role.Name</td>
+                <td>
+                    <form asp-action="DeleteRole" method="post">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="id" value="@role.Id" />
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a class="btn btn-primary" asp-action="AddRole">Add New Role</a>

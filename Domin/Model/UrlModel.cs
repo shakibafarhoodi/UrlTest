@@ -16,5 +16,7 @@ namespace Domin.Model
         public int time { get; set; }
         public string? Img { get; set; } 
         public int? Priority { get; set; }
+        //public virtual ICollection<UserModel> Users { get; set; }/* =new List<UserModel>();*/
+
     }
 }

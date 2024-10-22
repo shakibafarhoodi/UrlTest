@@ -1,4 +1,4 @@
-﻿namespace Persent_App.Views.Url
+﻿namespace Domin.ViewModel
 {
     public class UpdateUrlViewModel
     {

@@ -1,0 +1,87 @@
+﻿@using Domin.ViewModel;
+@model LoginViewModel
+
+@{
+    Layout = "_Layout";
+}
+
+<html lang="en">
+<head>
+    <title>Login 10</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="~/assest/css/style.css" rel="stylesheet" />
+</head>
+<body class="img js-fullheight" style="background-image: url('/assest/images/bg.jpg');">
+
+    <section class="ftco-section">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-md-6 text-center mb-5">
+                    <h2 class="heading-section"></h2>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-lg-4">
+                    <div class="login-wrap p-0">
+                        <h3 class="mb-4 text-center"></h3>
+                        <form asp-controller="Account" asp-action="Login" method="post">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <br />
+                            <div class="form-group">
+                                <input type="text" style="font-family:Exo" asp-for="UserName" class="form-control" placeholder="UserName" required>
+                            </div>
+                            <div class="form-group">
+                                <input id="password-field" style="font-family:Exo"  asp-for="Password" type="password" class="form-control" placeholder="Password" required>
+                                <span class="fa fa-fw fa-eye field-icon toggle-password" onclick="togglePassword()" style="cursor: pointer;"></span>
+                            </div>
+                            <div class="form-group">
+                                <button type="submit" style="font-family:Exo" class="form-control btn btn-primary submit px-3">Sign In</button>
+                            </div>
+                            
+
+                            <div style="display: flex; justify-content: space-between;">
+                                <div class="w-50 text-md-right">
+                                    <a style="color: #fff; font-family:Exo" asp-action="ForgotPassword" asp-controller="Account">Forgot Password ?</a>
+                                </div>
+                                <div class="w-50 text-md-right">
+                                    <a style="color: #fff font-family:Exo" asp-action="Rigister" asp-controller="Account">Register</a>
+                                </div>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script src="~/assest/js/popper.js"></script>
+    <script src="~/assest/js/bootstrap.min.js"></script>
+    <script src="~/assest/js/main.js"></script>
+
+    <script>
+        function togglePassword() {
+            const passwordField = document.getElementById("password-field");
+            const icon = document.querySelector(".toggle-password");
+
+            // تغییر نوع ورودی
+            if (passwordField.type === "password") {
+                passwordField.type = "text";
+                icon.classList.remove("fa-eye");
+                icon.classList.add("fa-eye-slash");
+            } else {
+                passwordField.type = "password";
+                icon.classList.remove("fa-eye-slash");
+                icon.classList.add("fa-eye");
+            }
+        }
+       
+
+    </script>
+
+</body>
+</html>

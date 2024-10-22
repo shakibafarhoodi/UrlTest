@@ -7,8 +7,10 @@
     <title>Dynamic URL Table</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="~/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css">
-    <link href="~/css/indexStyle.css" rel="stylesheet">
+  @*  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css">
+    <link href="~/css/indexStyle.css" rel="stylesheet">*@
+    <link rel='stylesheet' href='https://pro.fontawesome.com/releases/v5.2.0/css/all.css'>
+    <link rel="stylesheet" href="~/css/Css_Importent/style.css">
     <style>
         .form-container {
             border: 1px solid #3f51b575;
@@ -99,15 +101,23 @@
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="container" style="margin-top:300px">
         <div class="table-container">
             <div class="row" style="margin-top:20px;">
-                <div class="col-sm-12"><h3>URL Table</h3></div>
+                <div class="col-sm-8" style="font-family:Exo;color:#3b5998">URL Table</div>
+                <div class="col-sm-3" style="display: flex; flex-direction: column; align-items: center;">
+                    <form asp-action="Logout" asp-controller="Account" method="post" style="display: flex; align-items: center;">
+                        <img src="~/Img/Icon_logout.gif" alt="Avatar Animation" style="width: 30px; height: 30px; margin-right: 5px;">
+                        <button class="btn btn-outline" style="font-size: 12px; direction:rtl;color:#3b5998">Log Out</button>
+                    </form>
+                </div>
             </div>
+
             <br />
             <div id="successMessage" class="alert alert-success" style="display:none;"></div>
             <div id="errorMessage" class="alert alert-danger" style="display:none;"></div>
             <form id="urlForm" method="post" class="contact-us-form form-container" enctype="multipart/form-data">
+                @Html.AntiForgeryToken()
                 <div class="form-group dropdown-container">
                     <label for="inputType">Select Input Type</label>
                     <select id="inputType" class="form-control">
@@ -143,23 +153,15 @@
             </div>
         </div>
     </div>
-    <div class="floating-menu">
+    <div class="wrapper">
         <input type="checkbox" id="toggle" />
-        <label class="circle" for="toggle">
-            <div class="hamburger">
-                <div class="bar"></div>
-                <div class="bar"></div>
-                <div class="bar"></div>
-            </div>
-        </label>
-        <nav class="nav">
-            <ul>
-                <li><a asp-controller="Url" asp-action="index" class="pulse"><i class="ri-home-line"></i></a></li>
-                @*                <li><a asp-controller="Url" asp-action="CreateUrl" class="ri-settings-3-line"></a></li>
-                *@@*                <li><a href="#0"><i class="ri-send-plane-2-line"></i></a></li>
-                *@
-            </ul>
-        </nav>
+        <label for="toggle" class="fab"><img src="../css/Css_Importent/png_3qj3h.png" alt="FAB Icon"></label>
+        <div class="fac">
+            <a asp-controller="Url" asp-action="index"><i class="fas fa-home"></i></a>
+            <a asp-controller="Url" asp-action="CreateUrl"><i class="far fa-cog"></i></a>
+            @*            <a href="#"><i class="fas fa-user"></i></a>
+            *@
+        </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
@@ -193,6 +195,9 @@
                 var successMessage = $('#successMessage');
                 var errorMessage = $('#errorMessage');
 
+                // گرفتن توکن ضد جعل از ورودی مخفی فرم
+                var token = $('input[name="__RequestVerificationToken"]').val();
+
                 var formData = new FormData();
                 formData.append("Time", timeInput);
                 formData.append("Priority", priorityInput)
@@ -208,6 +213,9 @@
                     data: formData,
                     contentType: false, // این تنظیمات ضروری است
                     processData: false, // این تنظیمات ضروری است
+                    headers: {
+                        'RequestVerificationToken': token // اضافه کردن توکن به هدر درخواست
+                    },
                     success: function (response) {
                         if (response.success) {
                             successMessage.text(response.message).show();
@@ -262,6 +270,119 @@
                 $(this).val('');
             });
         });
+        function checkSession() {
+            fetch('/Account/CheckSession')
+                .then(response => {
+                    if (response.status === 401) {
+                        window.location.href = '/Account/Login'; // هدایت به صفحه ورود
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking session:', error);
+                });
+        }
+
+        // بررسی وضعیت سشن هر 5 ثانیه
+        setInterval(checkSession, 5000);
+
+        //$(document).ready(function () {
+        //    $('#inputType').change(function () {
+        //        var selectedValue = $(this).val();
+        //        if (selectedValue) {
+        //            $('#formFields').removeClass('hidden');
+        //            if (selectedValue == 'url') {
+        //                $('#urlInput').show();
+        //                $('#imgInput').hide();
+        //            } else {
+        //                $('#urlInput').hide();
+        //                $('#imgInput').show();
+        //            }
+        //        } else {
+        //            $('#formFields').addClass('hidden');
+        //        }
+        //    });
+
+        //    $('#urlForm').on('submit', function (e) {
+        //        e.preventDefault(); // جلوگیری از ارسال فرم به صورت عادی
+
+        //        var inputType = $('#inputType').val();
+        //        var urlInput = $('#urlInput').val();
+        //        var timeInput = $('#timeInput').val();
+        //        var imgFile = $('#imgInput')[0].files[0];
+        //        var priorityInput = $('#priorityInput').val();
+        //        var validationMessage = $('#validationMessage');
+        //        var successMessage = $('#successMessage');
+        //        var errorMessage = $('#errorMessage');
+
+        //        var formData = new FormData();
+        //        formData.append("Time", timeInput);
+        //        formData.append("Priority", priorityInput)
+        //        if (inputType == 'url') {
+        //            formData.append("Url", urlInput);
+        //        } else {
+        //            formData.append("ImgFile", imgFile);
+        //        }
+
+        //        $.ajax({
+        //            type: 'POST',
+        //            url: '@Url.Action("CreateUrl", "Url")',
+        //            data: formData,
+        //            contentType: false, // این تنظیمات ضروری است
+        //            processData: false, // این تنظیمات ضروری است
+        //            success: function (response) {
+        //                if (response.success) {
+        //                    successMessage.text(response.message).show();
+        //                    errorMessage.hide();
+        //                    setTimeout(function () {
+        //                        successMessage.fadeOut();
+        //                    }, 3000); // پیام موفقیت پس از 3 ثانیه محو می‌شود
+
+        //                    // به روز رسانی لیست URL‌ها با استفاده از کامپوننت ListUrlComponent
+        //                    refreshUrlList();
+        //                } else {
+        //                    errorMessage.text(response.message).show();
+        //                    successMessage.hide();
+        //                    setTimeout(function () {
+        //                        errorMessage.fadeOut();
+        //                    }, 3000); // پیام خطا پس از 3 ثانیه محو می‌شود
+        //                }
+        //            },
+        //            error: function (xhr, status, error) {
+        //                errorMessage.text("An error occurred while processing your request. Please try again.").show();
+        //                successMessage.hide();
+        //                setTimeout(function () {
+        //                    errorMessage.fadeOut();
+        //                }, 3000); // پیام خطا پس از 3 ثانیه محو می‌شود
+        //            }
+        //        });
+
+        //        function refreshUrlList() {
+        //            // این تابع برای به روز رسانی لیست URL‌ها از کامپوننت ListUrlComponent استفاده می‌کند
+        //            $.ajax({
+        //                type: 'GET',
+        //                url: '@Url.Action("ListUrlComponent", "Url")',
+        //                success: function (result) {
+        //                    $('#listUrlComponentContainer').html(result);
+        //                },
+        //                error: function (xhr, status, error) {
+        //                    console.error("Error refreshing URL list:", error);
+        //                }
+        //            });
+        //        }
+
+        //        // پاک کردن فیلدهای فرم
+        //        $('#urlInput').val('');
+        //        $('#imgInput').val('');
+        //        $('#timeInput').val('');
+        //        $('#priorityInput').val('');
+
+        //    });
+
+        //    // پاک کردن محتوا پس از کلیک روی فیلدها
+        //    $('#urlInput, #timeInput, #imgInput').on('click', function () {
+        //        $(this).val('');
+        //    });
+        //});
     </script>
 </body>
 </html>

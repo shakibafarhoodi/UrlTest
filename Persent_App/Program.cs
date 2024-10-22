@@ -1,7 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using Data.PnsContext;
+﻿using Data.PnsContext;
 using IOC;
-using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Persent_App.SessionCheckMiddleware;
 using WebMarkupMin.AspNetCore6;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,27 +11,46 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DbContext, UrlContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+//builder.Services.AddIdentity<IdentityUser, IdentityRole>(
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(
+    Options =>
+    {
+
+        Options.SignIn.RequireConfirmedAccount = true;
+
+    })
+    .AddEntityFrameworkStores<UrlContext>()
+    .AddDefaultTokenProviders();
+
 DependencyContainer.RegisterServices(builder.Services);
-
-//Cooki
-
-//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie();
-
-builder.Services.AddAuthentication(options =>
+builder.Services.AddSession(options =>
 {
-    options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie(options =>
-{
-    options.LoginPath = "/User/Login";
-    options.LogoutPath = "/User/Logout";
-    options.ExpireTimeSpan = TimeSpan.FromMinutes(43200);
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // مدت زمان انقضای سشن
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
 });
 
+
+//builder.Services.AddSession(options =>
+//{
+//    options.IdleTimeout = TimeSpan.FromMinutes(30); // مدت زمان انقضای سشن
+//    options.Cookie.HttpOnly = true; // فقط برای درخواست‌های سمت سرور
+//    options.Cookie.IsEssential = true; // الزامی
+//});
+
+
+//builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+//    .AddCookie(options =>
+//    {
+//        options.LoginPath = "/account/Login";
+//        options.LogoutPath = "/account/Logout";
+//        options.AccessDeniedPath = "/account/AccessDenied";
+//        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+//    });
+
+builder.Services.AddAuthorization();
 builder.Services.AddWebMarkupMin(options =>
 {
-    options.AllowMinificationInDevelopmentEnvironment = true;
     options.AllowCompressionInDevelopmentEnvironment = true;
 })
 .AddHtmlMinification()
@@ -55,12 +75,17 @@ app.Use(async (context, next) =>
     context.Response.Headers.Add("Content-Security", "default-src 'self'");
     await next();
 });
+
 app.UseHttpsRedirection();
 app.UseStaticFiles();
 app.UseWebMarkupMin();
 app.UseRouting();
+app.UseSession();
+app.UseMiddleware<SessionCheck>();
+
 app.UseAuthentication();
 app.UseAuthorization();
+
 
 
 app.UseEndpoints(endpoints =>
