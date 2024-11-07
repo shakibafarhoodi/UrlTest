@@ -48,7 +48,7 @@
                                     <a style="color: #fff; font-family:Exo" asp-action="ForgotPassword" asp-controller="Account">Forgot Password ?</a>
                                 </div>
                                 <div class="w-50 text-md-right">
-                                    <a style="color: #fff font-family:Exo" asp-action="Rigister" asp-controller="Account">Register</a>
+                                    <a style="color: #fff font-family:Exo" asp-action="Register" asp-controller="Account">Register</a>
                                 </div>
                             </div>
 
@@ -63,25 +63,7 @@
     <script src="~/assest/js/bootstrap.min.js"></script>
     <script src="~/assest/js/main.js"></script>
 
-    <script>
-        function togglePassword() {
-            const passwordField = document.getElementById("password-field");
-            const icon = document.querySelector(".toggle-password");
-
-            // تغییر نوع ورودی
-            if (passwordField.type === "password") {
-                passwordField.type = "text";
-                icon.classList.remove("fa-eye");
-                icon.classList.add("fa-eye-slash");
-            } else {
-                passwordField.type = "password";
-                icon.classList.remove("fa-eye-slash");
-                icon.classList.add("fa-eye");
-            }
-        }
-       
-
-    </script>
+    
 
 </body>
 </html>

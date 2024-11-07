@@ -29,13 +29,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Areas\admin\Controllers\" />
     <Folder Include="Areas\admin\Data\" />
     <Folder Include="Areas\admin\Models\" />
-    <Folder Include="Areas\admin\Views\" />
     <Folder Include="Areas\user\Data\" />
     <Folder Include="Areas\user\Models\" />
-    <Folder Include="wwwroot\NewFolder\" />
   </ItemGroup>
 
 </Project>

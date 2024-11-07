@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Domin.Model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using web.ViewModel;
@@ -8,8 +9,12 @@ namespace Persent_App.Controllers
 
     public class ManageUserController : Controller
     {
+        //private readonly UserManager<IdentityUser> _userManager;
         private readonly UserManager<IdentityUser> _userManager;
+
+
         private readonly RoleManager<IdentityRole> _roleManager;
+        //public ManageUserController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         public ManageUserController(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
@@ -34,6 +39,7 @@ namespace Persent_App.Controllers
             return View(model);
         }
         [HttpGet]
+
         public async Task<IActionResult> AddUserToRole(string id)
         {
             if (string.IsNullOrEmpty(id)) return NotFound();

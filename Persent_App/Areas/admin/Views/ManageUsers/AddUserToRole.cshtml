@@ -1,0 +1,46 @@
+﻿@using web.ViewModel;
+@model AddUserToRoleViewModel
+<link href="~/assest/themeaddusertorole/style.css" rel="stylesheet" />
+@*<form asp-action="AddUserToRole" method="post">
+    <input type="hidden" asp-for="UserId" />
+
+    <div>
+        <h4>Select Roles</h4>
+        @for (var i = 0; i < Model.UserRoles.Count; i++)
+        {
+            <div>
+                <input type="checkbox" name="UserRoles[@i].IsSelected" value="true" />
+                <input type="hidden" name="UserRoles[@i].RoleName" value="@Model.UserRoles[i].RoleName" />
+                <label for="UserRoles[@i].IsSelected">@Model.UserRoles[i].RoleName</label>
+            </div>
+        }
+    </div>
+
+    <button type="submit">Add Roles</button>
+</form>*@
+
+<div class="wrapper">
+    <div class="grid">
+        <form asp-action="AddUserToRole" method="post" style="border: 1px solid #000;">
+
+            <input type="hidden" asp-for="UserId" />
+            <h5>Select Roles</h5>
+            @for (var i = 0; i < Model.UserRoles.Count; i++)
+            {
+
+
+                <fieldset>
+
+                    <div class="form__group">
+                        <input type="checkbox" name="UserRoles[@i].IsSelected" value="true" />
+                        <input type="hidden" name="UserRoles[@i].RoleName" id="berries_2b" value="@Model.UserRoles[i].RoleName">
+                        <label for="UserRoles[@i].IsSelected" name="UserRoles[@i].RoleName">@Model.UserRoles[i].RoleName</label>
+                    </div>
+
+                </fieldset>
+
+            }
+            <button type="submit">Add Roles</button>
+        </form>
+    </div>
+</div>

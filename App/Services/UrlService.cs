@@ -1,22 +1,16 @@
-﻿using Data.Repository;
-using Domin.InterFaceRepository;
+﻿using Domin.InterFaceRepository;
 using Domin.Model;
 using Domin.ViewModel;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Web.Mvc;
+using System.Data;
 
 namespace App.Services
 {
     public class UrlService : IUrlService
     {
         private readonly IUrlRepository _urlRepository;
-        //private readonly UserManager<UserModel> _userManager;
+        private readonly UserManager<IdentityUser> _userManager;
 
         public UrlService(IUrlRepository urlRepository)
         {
@@ -33,12 +27,14 @@ namespace App.Services
         public async Task<List<UrlModel>> GetAllUrlsAsync()
         {
             //return await _urlRepository.GetAllAsync();
-            var urls = await _urlRepository.GetAllAsync();
-            return urls.OrderBy(u => u.Priority).ToList();
+            var url = await _urlRepository.GetAllAsync();
+            return url.OrderBy(u => u.Priority).ToList();
         }
-
-        public async Task<ResultUrl> CreateUrl(CreateUrlViewModel model, string userId)
+        public async Task<ResultUrl> CreateUrl(CreateUrlViewModel model, string userId,string userName)
         {
+            //var validationResult = await _CreateUrlValidator.ValidateAsync(modle);
+          
+
             if (model == null || (string.IsNullOrEmpty(model.Url) && model.ImgFile == null))
             {
                 return ResultUrl.Required; // Error result if both Url and ImgFile are empty
@@ -68,6 +64,7 @@ namespace App.Services
                     return ResultUrl.Duplicate; // اگر Priority تکراری باشد
                 }
             }
+           
 
             if (model != null)
             {
@@ -76,12 +73,16 @@ namespace App.Services
                     Url = model.Url,
                     time = model.Time,
                     Img = model.ImgFile != null ? model.ImgFile.FileName.Trim().Replace(" ", "") : null,
-                    Priority = model.Priority.Value
+                    Priority = model.Priority.Value,
+                    userId = userId  ,    // ذخیره شناسه کاربر
+                    userName = userName
+                  
                 };
 
                 if (model.ImgFile != null)
                 {
                     var imgFileName = model.ImgFile.FileName.Trim().Replace(" ", "");
+                    //var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Img", imgFileName);
                     var filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/Img", imgFileName);
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
@@ -89,33 +90,22 @@ namespace App.Services
                     }
                 }
 
-                //await _urlRepository.AddAsync(urlModel);
-                //await _urlRepository.SaveAsync(urlModel);
+                await _urlRepository.AddAsync(urlModel);
+                await _urlRepository.SaveAsync(urlModel);
 
 
-                //var user = await _userManager.FindByIdAsync(userId);
-                //if (user == null)
-                //{
-                //    return ResultUrl.notfound; // کاربر پیدا نشد
-                //}
-
-                //// ایجاد رابطه بین کاربر و URL
-                ////user.Urls.Add(urlModel);
-
-                //// به‌روزرسانی اطلاعات کاربر در دیتابیس
-                //await _userManager.UpdateAsync(user);
-
-                //return ResultUrl.Success;
-
-
-
+   
                 return ResultUrl.Success;
+
+
+
+
             }
 
             return ResultUrl.eror;
         }
 
-       
+
 
         public async Task UpdatePrioritiesAsync()
         {

@@ -2,18 +2,22 @@
 using Domin.Model;
 using Domin.ViewModel;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Persent_App.Controllers
 {
-    
+
+
     public class UrlController : Controller
     {
         private readonly IUrlService _urlService;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public UrlController(IUrlService urlService)
+        public UrlController(IUrlService urlService, UserManager<IdentityUser> userManager)
         {
             _urlService = urlService;
+            _userManager = userManager;
         }
         [HttpGet]
         public IActionResult CheckSession()
@@ -51,12 +55,13 @@ namespace Persent_App.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "USER")]
+        [Authorize(Roles = "admin,user")]
 
         public IActionResult CreateUrl()
         {
+            
             var isAuthenticated = User.Identity.IsAuthenticated;
-            Console.WriteLine($"Is Authenticated: {isAuthenticated}");
+            //Console.WriteLine($"Is Authenticated: {isAuthenticated}");
             if (User.Identity.IsAuthenticated)
             {
                 // کاربر لاگین کرده است، اجازه نمایش صفحه داده می‌شود.
@@ -71,11 +76,16 @@ namespace Persent_App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> CreateUrl(CreateUrlViewModel model,string UserId)
+        public async Task<IActionResult> CreateUrl(CreateUrlViewModel model)
         {
             if (!ModelState.IsValid)
                 return View(model);
-            var result = await _urlService.CreateUrl(model, UserId);
+            var userID = _userManager.GetUserId(User);
+            var user = await _userManager.GetUserAsync(User);
+            var userid = user.Id;
+            var userName=user.UserName;
+ 
+            var result = await _urlService.CreateUrl(model, userid, userName);
 
             switch (result)
             {
@@ -105,6 +115,8 @@ namespace Persent_App.Controllers
         //}
 
         [HttpPost]
+        [Authorize(Roles = "admin")]
+
         public async Task<IActionResult> UpdatePriorities([FromBody] List<UpdateUrlViewModel> updatedPriorities)
         {
             if (updatedPriorities == null || !updatedPriorities.Any())
@@ -118,6 +130,8 @@ namespace Persent_App.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = "admin")]
+
         public async Task<IActionResult> GetUrls()
         {
             var urls = await _urlService.GetAllUrlsAsync();

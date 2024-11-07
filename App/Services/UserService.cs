@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Domin.Model;
+using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,16 +12,18 @@ namespace App.Services
     public class UserService : IUserService
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        //private readonly RoleManager<IdentityRole> _roleManager;
 
-        public UserService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        //public UserService(UserManager<IdentityUser> userManager, RoleManager<IdentityRole> roleManager)
+        public UserService(UserManager<IdentityUser> userManager)
+
         {
             _userManager = userManager;
-            _roleManager = roleManager;
+            //_roleManager = roleManager;
         }
-        public async Task<List<ManageUserViewModel>> GetAllUsersAsync()
+        public  List<ManageUserViewModel> GetAllUsersAsync()
         {
-            return _userManager.Users.Select(u => new ManageUserViewModel
+            return  _userManager.Users.Select(u => new ManageUserViewModel
             {
                 Id = u.Id,
                 UserName = u.UserName,

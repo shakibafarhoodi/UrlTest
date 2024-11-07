@@ -19,6 +19,8 @@ namespace Domin.Model
 
         //public string? Img { get; set; }
         public int? Priority { get; set; }
+        //public  string UserName { get; set; }
+        //public string UserId { get; set; }
     }
     public enum ResultUrl 
     {

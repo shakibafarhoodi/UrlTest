@@ -7,8 +7,6 @@
     <title>Dynamic URL Table</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="~/bootstrap-4.3.1-dist/css/bootstrap.min.css" rel="stylesheet" />
-  @*  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/remixicon@2.2.0/fonts/remixicon.css">
-    <link href="~/css/indexStyle.css" rel="stylesheet">*@
     <link rel='stylesheet' href='https://pro.fontawesome.com/releases/v5.2.0/css/all.css'>
     <link rel="stylesheet" href="~/css/Css_Importent/style.css">
     <style>
@@ -101,7 +99,7 @@
     </style>
 </head>
 <body>
-    <div class="container" style="margin-top:300px">
+    <div class="container" style="margin-top:320px">
         <div class="table-container">
             <div class="row" style="margin-top:20px;">
                 <div class="col-sm-8" style="font-family:Exo;color:#3b5998">URL Table</div>
@@ -142,7 +140,7 @@
                         <input asp-for="Priority" type="number" id="priorityInput" class="form-control" placeholder="Enter Priority">
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="background-color:#3F51B5;width:100px;">Add</button>
+                    <button type="submit" class="btn btn-primary" style="width:100px;background-image:linear-gradient(195deg, #d3d6ee 0%, #07115cd1 100%);border: none;">Add</button>
                 </div>
                 <span asp-validation-for="Url" class="text-danger"></span>
                 <span asp-validation-for="Time" class="text-danger"></span>
@@ -157,10 +155,8 @@
         <input type="checkbox" id="toggle" />
         <label for="toggle" class="fab"><img src="../css/Css_Importent/png_3qj3h.png" alt="FAB Icon"></label>
         <div class="fac">
-            <a asp-controller="Url" asp-action="index"><i class="fas fa-home"></i></a>
-            <a asp-controller="Url" asp-action="CreateUrl"><i class="far fa-cog"></i></a>
-            @*            <a href="#"><i class="fas fa-user"></i></a>
-            *@
+            <a asp-controller="Url" asp-action="index" target="_blank"><i class="fas fa-home"></i></a>
+            <a asp-controller="Url" asp-action="CreateUrl" target="_blank"><i class="far fa-cog"></i></a>
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
@@ -184,7 +180,7 @@
             });
 
             $('#urlForm').on('submit', function (e) {
-                e.preventDefault(); // جلوگیری از ارسال فرم به صورت عادی
+                e.preventDefault();
 
                 var inputType = $('#inputType').val();
                 var urlInput = $('#urlInput').val();
@@ -195,7 +191,30 @@
                 var successMessage = $('#successMessage');
                 var errorMessage = $('#errorMessage');
 
-                // گرفتن توکن ضد جعل از ورودی مخفی فرم
+                validationMessage.text('').hide();
+                successMessage.hide();
+                errorMessage.hide();
+
+                if (!inputType) {
+                    validationMessage.text('Please select an input type.').show();
+                    return;
+                }
+
+                if (inputType == 'url' && !urlInput) {
+                    validationMessage.text('Please enter a URL.').show();
+                    return;
+                }
+
+                if (inputType == 'image' && !imgFile) {
+                    validationMessage.text('Please upload an image.').show();
+                    return;
+                }
+
+                if (!timeInput) {
+                    validationMessage.text('Please enter a time in milliseconds.').show();
+                    return;
+                }
+
                 var token = $('input[name="__RequestVerificationToken"]').val();
 
                 var formData = new FormData();
@@ -211,40 +230,35 @@
                     type: 'POST',
                     url: '@Url.Action("CreateUrl", "Url")',
                     data: formData,
-                    contentType: false, // این تنظیمات ضروری است
-                    processData: false, // این تنظیمات ضروری است
+                    contentType: false,
+                    processData: false,
                     headers: {
-                        'RequestVerificationToken': token // اضافه کردن توکن به هدر درخواست
+                        'RequestVerificationToken': token
                     },
                     success: function (response) {
                         if (response.success) {
                             successMessage.text(response.message).show();
-                            errorMessage.hide();
                             setTimeout(function () {
                                 successMessage.fadeOut();
-                            }, 3000); // پیام موفقیت پس از 3 ثانیه محو می‌شود
+                            }, 3000);
 
-                            // به روز رسانی لیست URL‌ها با استفاده از کامپوننت ListUrlComponent
                             refreshUrlList();
                         } else {
                             errorMessage.text(response.message).show();
-                            successMessage.hide();
                             setTimeout(function () {
                                 errorMessage.fadeOut();
-                            }, 3000); // پیام خطا پس از 3 ثانیه محو می‌شود
+                            }, 3000);
                         }
                     },
                     error: function (xhr, status, error) {
                         errorMessage.text("An error occurred while processing your request. Please try again.").show();
-                        successMessage.hide();
                         setTimeout(function () {
                             errorMessage.fadeOut();
-                        }, 3000); // پیام خطا پس از 3 ثانیه محو می‌شود
+                        }, 3000);
                     }
                 });
 
                 function refreshUrlList() {
-                    // این تابع برای به روز رسانی لیست URL‌ها از کامپوننت ListUrlComponent استفاده می‌کند
                     $.ajax({
                         type: 'GET',
                         url: '@Url.Action("ListUrlComponent", "Url")',
@@ -257,15 +271,12 @@
                     });
                 }
 
-                // پاک کردن فیلدهای فرم
                 $('#urlInput').val('');
                 $('#imgInput').val('');
                 $('#timeInput').val('');
                 $('#priorityInput').val('');
-
             });
 
-            // پاک کردن محتوا پس از کلیک روی فیلدها
             $('#urlInput, #timeInput, #imgInput').on('click', function () {
                 $(this).val('');
             });
@@ -274,7 +285,7 @@
             fetch('/Account/CheckSession')
                 .then(response => {
                     if (response.status === 401) {
-                        window.location.href = '/Account/Login'; // هدایت به صفحه ورود
+                        window.location.href = '/Account/Login';
                     }
                 })
                 .catch(error => {
@@ -282,107 +293,7 @@
                 });
         }
 
-        // بررسی وضعیت سشن هر 5 ثانیه
         setInterval(checkSession, 5000);
-
-        //$(document).ready(function () {
-        //    $('#inputType').change(function () {
-        //        var selectedValue = $(this).val();
-        //        if (selectedValue) {
-        //            $('#formFields').removeClass('hidden');
-        //            if (selectedValue == 'url') {
-        //                $('#urlInput').show();
-        //                $('#imgInput').hide();
-        //            } else {
-        //                $('#urlInput').hide();
-        //                $('#imgInput').show();
-        //            }
-        //        } else {
-        //            $('#formFields').addClass('hidden');
-        //        }
-        //    });
-
-        //    $('#urlForm').on('submit', function (e) {
-        //        e.preventDefault(); // جلوگیری از ارسال فرم به صورت عادی
-
-        //        var inputType = $('#inputType').val();
-        //        var urlInput = $('#urlInput').val();
-        //        var timeInput = $('#timeInput').val();
-        //        var imgFile = $('#imgInput')[0].files[0];
-        //        var priorityInput = $('#priorityInput').val();
-        //        var validationMessage = $('#validationMessage');
-        //        var successMessage = $('#successMessage');
-        //        var errorMessage = $('#errorMessage');
-
-        //        var formData = new FormData();
-        //        formData.append("Time", timeInput);
-        //        formData.append("Priority", priorityInput)
-        //        if (inputType == 'url') {
-        //            formData.append("Url", urlInput);
-        //        } else {
-        //            formData.append("ImgFile", imgFile);
-        //        }
-
-        //        $.ajax({
-        //            type: 'POST',
-        //            url: '@Url.Action("CreateUrl", "Url")',
-        //            data: formData,
-        //            contentType: false, // این تنظیمات ضروری است
-        //            processData: false, // این تنظیمات ضروری است
-        //            success: function (response) {
-        //                if (response.success) {
-        //                    successMessage.text(response.message).show();
-        //                    errorMessage.hide();
-        //                    setTimeout(function () {
-        //                        successMessage.fadeOut();
-        //                    }, 3000); // پیام موفقیت پس از 3 ثانیه محو می‌شود
-
-        //                    // به روز رسانی لیست URL‌ها با استفاده از کامپوننت ListUrlComponent
-        //                    refreshUrlList();
-        //                } else {
-        //                    errorMessage.text(response.message).show();
-        //                    successMessage.hide();
-        //                    setTimeout(function () {
-        //                        errorMessage.fadeOut();
-        //                    }, 3000); // پیام خطا پس از 3 ثانیه محو می‌شود
-        //                }
-        //            },
-        //            error: function (xhr, status, error) {
-        //                errorMessage.text("An error occurred while processing your request. Please try again.").show();
-        //                successMessage.hide();
-        //                setTimeout(function () {
-        //                    errorMessage.fadeOut();
-        //                }, 3000); // پیام خطا پس از 3 ثانیه محو می‌شود
-        //            }
-        //        });
-
-        //        function refreshUrlList() {
-        //            // این تابع برای به روز رسانی لیست URL‌ها از کامپوننت ListUrlComponent استفاده می‌کند
-        //            $.ajax({
-        //                type: 'GET',
-        //                url: '@Url.Action("ListUrlComponent", "Url")',
-        //                success: function (result) {
-        //                    $('#listUrlComponentContainer').html(result);
-        //                },
-        //                error: function (xhr, status, error) {
-        //                    console.error("Error refreshing URL list:", error);
-        //                }
-        //            });
-        //        }
-
-        //        // پاک کردن فیلدهای فرم
-        //        $('#urlInput').val('');
-        //        $('#imgInput').val('');
-        //        $('#timeInput').val('');
-        //        $('#priorityInput').val('');
-
-        //    });
-
-        //    // پاک کردن محتوا پس از کلیک روی فیلدها
-        //    $('#urlInput, #timeInput, #imgInput').on('click', function () {
-        //        $(this).val('');
-        //    });
-        //});
     </script>
 </body>
 </html>

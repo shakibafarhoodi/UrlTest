@@ -1,18 +1,25 @@
 ﻿@{
     ViewData["Title"] = "Home Page";
-}
-<div class="text-center">
-    @if (ViewBag.IsConfirmed)
+    var hasAccess = ViewBag.HasAccess as bool? ?? false;
+ }
+<div class="text-center" style="margin-top:20px;font-family:Exo">
+    @if (ViewBag.HasAccess == null)
+    {
+        <div class="alert alert-warning">
+            <p> <a asp-action="Login" asp-controller="Account">  Access status is unknown. Please try logging in.</a></p>
+        </div>
+    }
+    else if (hasAccess)
     {
         <div class="alert alert-success">
-        دسترسی به این سایت ندارید     
+            You have access to this site.
         </div>
-        <p><a asp-action="Login" asp-controller="Account">Login to web site</a></p>
+        <p><a asp-action="Login" asp-controller="Account">Login to the website</a></p>
     }
     else
     {
         <div class="alert alert-danger">
-            حساب کاربری شما تایید نشد
+            <p><a asp-action="Login" asp-controller="Account">  You do not have access to this site. Please log in.</a></p>
         </div>
     }
 </div>

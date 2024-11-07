@@ -1,4 +1,5 @@
 ﻿using Data.PnsContext;
+using Domin.Model;
 using IOC;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -11,7 +12,6 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DbContext, UrlContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-//builder.Services.AddIdentity<IdentityUser, IdentityRole>(
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(
     Options =>
     {
@@ -47,6 +47,12 @@ builder.Services.AddSession(options =>
 //        options.AccessDeniedPath = "/account/AccessDenied";
 //        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
 //    });
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Account/Login"; // مسیر صفحه ورود
+    options.AccessDeniedPath = "/Account/AccessDenied"; // مسیر صفحه عدم دسترسی
+});
+
 
 builder.Services.AddAuthorization();
 builder.Services.AddWebMarkupMin(options =>

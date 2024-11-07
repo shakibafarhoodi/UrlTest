@@ -1,7 +1,6 @@
 ﻿using App.Services;
 using Domin.Model;
 using Domin.ViewModel;
-using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -14,15 +13,13 @@ namespace Persent_App.Controllers
     public class AccountController : Controller
     {
         private readonly UserManager<IdentityUser> _userManager;
-        //private readonly UserManager<UserModel> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
-        //private readonly SignInManager<UserModel> _signInManager;
         private readonly IEmailSenderServices _emailSender;
         private readonly IViewRenderService _viewRenderService;
 
 
+        //public AccountController(UserManager<IdentityUser> userManager, IEmailSenderServices emailSender, IViewRenderService viewRenderService, SignInManager<IdentityUser> signInManager)
         public AccountController(UserManager<IdentityUser> userManager, IEmailSenderServices emailSender, IViewRenderService viewRenderService, SignInManager<IdentityUser> signInManager)
-        //public AccountController(UserManager<UserModel> userManager, IEmailSenderServices emailSender, IViewRenderService viewRenderService, SignInManager<UserModel> signInManager)
         {
             _userManager = userManager;
             _emailSender = emailSender;
@@ -44,6 +41,7 @@ namespace Persent_App.Controllers
 
         [HttpGet]
         public IActionResult AccessDenied()
+        
         {
             return View();
         }
@@ -96,7 +94,7 @@ namespace Persent_App.Controllers
 
             token = Encoding.UTF8.GetString(WebEncoders.Base64UrlDecode(token));
             var result = await _userManager.ConfirmEmailAsync(user, token);
-            ViewBag.IsConfirmed = result.Succeeded ? true : false;
+            ViewBag.IsConfirmed = result.Succeeded;/* result.Succeeded ? true : false;*/
             return View();
         }
 
@@ -105,7 +103,6 @@ namespace Persent_App.Controllers
         {
             return View();
 
-         
         }
 
         [HttpPost]
@@ -169,14 +166,42 @@ namespace Persent_App.Controllers
             {
                 return View(model);
             }
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user == null)
+            {
+                // کاربر یافت نشد
+                ModelState.AddModelError(string.Empty, "کاربر یافت نشد");
+                return View(model);
+            }
+
+            if (!await _userManager.IsEmailConfirmedAsync(user))
+            {
+                // ایمیل کاربر تایید نشده
+                ModelState.AddModelError(string.Empty, "ایمیل شما تأیید نشده است.");
+                return View(model);
+            }
 
             // تلاش برای لاگین کاربر با نام کاربری و رمز عبور
             var result = await _signInManager.PasswordSignInAsync(model.UserName, model.Password, model.RememberMe, lockoutOnFailure: false);
+            var roles = await _userManager.GetRolesAsync(user);
 
             if (result.Succeeded)
             {
                 HttpContext.Session.SetString("IsLoggedIn", "true");
-                return RedirectToAction("CreateUrl", "Url");
+                if (roles.Contains("admin"))
+                {
+                    return RedirectToAction("Index", "Dashboard", new { area = "admin" });
+                }
+                else if (roles.Contains("user"))
+                {
+                    return RedirectToAction("CreateUrl", "Url"); // به صفحه‌ی مخصوص کاربران هدایت شود
+                }
+                else if (roles.Contains("admin") && roles.Contains("user")) 
+                {
+                    return RedirectToAction("Index", "Dashboard", new { area = "admin" });
+
+                }
+                return RedirectToAction("Login", "Account");
             }
             else
             {
@@ -186,7 +211,7 @@ namespace Persent_App.Controllers
             }
         }
 
-   
+
 
         [HttpGet]
         public IActionResult ForgotPassword()
@@ -259,11 +284,16 @@ namespace Persent_App.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
+        public IActionResult Logout()
         {
             //await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             HttpContext.Session.Clear();  // پاک کردن سشن‌ها
-            return RedirectToAction("Login", "Account");
+            //return RedirectToAction("Login", "Account");
+            return new ContentResult
+            {
+                Content = "<script>localStorage.setItem('isLoggedOut', 'true'); window.location = '/Account/Login';</script>",
+                ContentType = "text/html"
+            };
             //await _signInManager.SignOutAsync();
             //return RedirectToAction("Login", "Account");
         }

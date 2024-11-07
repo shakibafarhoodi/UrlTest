@@ -14,7 +14,7 @@ namespace App.Services
         //Task<UrlModel> GetUrlByIdAsync(int id);
         void DeleteUrl(int id);
         //Task<ResultUrl> CreateUrl(CreateUrlViewModel model);
-        Task<ResultUrl> CreateUrl(CreateUrlViewModel model, string userId);
+        Task<ResultUrl> CreateUrl(CreateUrlViewModel model, string userId,string userName);
         Task UpdatePrioritiesAsync(List<UpdateUrlViewModel> updatedPriorities); // متد جدید
         Task UpdatePrioritiesAsync(); // متد جدید
 

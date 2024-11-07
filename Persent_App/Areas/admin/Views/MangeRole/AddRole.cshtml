@@ -1,0 +1,15 @@
+﻿@using Domin.ViewModel;
+@model MangerRoleViewModel
+
+<h2>Add New Role</h2>
+
+<form asp-action="AddRole" method="post">
+    <div class="form-group">
+        <label asp-for="Name"></label>
+        <input asp-for="Name" class="form-control" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Create Role</button>
+</form>
+
+<a asp-action="Index" class="btn btn-secondary">Back to Role List</a>

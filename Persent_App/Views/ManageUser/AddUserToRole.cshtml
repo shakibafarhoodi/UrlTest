@@ -44,3 +44,14 @@
             </form>
     </div>
 </div>
+<script>
+    // بررسی وضعیت خروج در تمام تب‌ها
+    if (sessionStorage.getItem('isLoggedOut') === 'true') {
+        window.location.href = '/Account/Login'; // هدایت به صفحه لاگین
+    }
+
+    // حذف کلید هنگام بارگذاری صفحه و ورود دوباره کاربر
+    window.addEventListener("load", function () {
+        sessionStorage.removeItem('isLoggedOut');
+    });
+</script>
