@@ -22,7 +22,7 @@ namespace Persent_App.Areas.admin.Controllers
         [HttpGet]
         public IActionResult AddRole()
         {
-            return View(new MangerRoleViewModel());
+            return View();
         }
 
         [HttpPost]

@@ -1,15 +1,46 @@
 ﻿@using Domin.ViewModel;
 @model MangerRoleViewModel
+@{
+    ViewData["Title"] = "Add Role";
+}
 
-<h2>Add New Role</h2>
+<div class="container mt-4" style="max-width: 500px; margin: auto;">
+    <div class="card shadow-sm p-4" style="border-radius: 12px; background-color: #ffffff;">
+        <h5 class="text-center mb-4" style="color: #07115c;">Add New Role</h5>
 
-<form asp-action="AddRole" method="post">
-    <div class="form-group">
-        <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
-        <span asp-validation-for="Name" class="text-danger"></span>
+        @if (!string.IsNullOrEmpty(ViewData["ErrorMessage"] as string))
+        {
+            <div class="alert alert-danger" role="alert">
+                @ViewData["ErrorMessage"]
+            </div>
+        }
+
+        <form asp-action="AddRole" method="post">
+            <div class="input-group">
+                <input asp-for="Name" class="form-control" placeholder="Enter role name" required />
+                <button type="submit" class="btn bg-gradient-dark" style="background-image: linear-gradient(195deg, #d3d6ee 0%, #07115cd1 100%); border: none;">
+                    <i class="fas fa-plus" style="color: white;"></i>
+                </button>
+            </div>
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </form>
     </div>
-    <button type="submit" class="btn btn-primary">Create Role</button>
-</form>
+</div>
 
-<a asp-action="Index" class="btn btn-secondary">Back to Role List</a>
+@section Scripts {
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+}
+
+<script>
+    // Redirect user to login page if logged out in another tab
+    window.addEventListener('storage', function (event) {
+        if (event.key === 'isLoggedOut' && event.newValue === 'true') {
+            window.location.href = '/Account/Login';
+        }
+    });
+
+    // Remove logout status from local storage on page load
+    window.addEventListener("load", function () {
+        localStorage.removeItem('isLoggedOut');
+    });
+</script>

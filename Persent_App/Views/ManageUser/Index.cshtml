@@ -3,128 +3,185 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Table without Drag and Drop</title>
-    <style>
-
-        .empty-cell {
-            text-align: center;
-            font-size: 1.5em; /* Reduced font size */
-            color: #3b5998;
-        }
-
-        /* Adding border to draggable items */
-        .draggable-item {
-            border: 2px dashed #3F51B5;
-            background-color: #f0f8ff;
-        }
-
-        /* Styling the table */
-        .table {
-            border-collapse: collapse;
-            width: 80%;
-            text-align: center;
-            margin-top:100px;
-        }
-
-            .table th, .table td {
-                padding: 10px; /* Adjusted padding */
-                font-size: 0.9em; /* Smaller font size for table content */
-            }
-
-        /* New class for the plus icon button */
-        .icon-buttonPluse {
-            color: blue;
-            font-size: 1.5em; /* Adjusted icon size */
-            text-decoration: none; /* Remove underline */
-        }
-
-        /* New class for the remove icon button */
-        .icon-button {
-            color: red; /* Change color for remove action */
-            font-size: 20px; /* Adjusted icon size */
-            text-decoration: none; /* Remove underline */
-        }
-
-        /* New class to center the icons */
-        .action-cell {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 10px; /* Increased gap between buttons for better spacing */
-        }
-
-        .separator {
-            padding: 0 5px; /* Reduced space for the separator */
-        }
-    </style>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="apple-touch-icon" sizes="76x76" href="../panel/img/apple-icon.png">
+    <link rel="icon" type="image/png" href="../panel/img/favicon.png">
+    <title>
+        Material Dashboard 3 by Creative Tim
+    </title>
+    <!-- Fonts and icons -->
+    <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Inter:300,400,500,600,700,900" />
+    <!-- Nucleo Icons -->
+    <link href="../panel/css/nucleo-icons.css" rel="stylesheet" />
+    <link href="../panel/css/nucleo-svg.css" rel="stylesheet" />
+    <!-- Font Awesome Icons -->
+    <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
+    <!-- Material Icons -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0" />
+    <!-- CSS Files -->
+    <link id="pagestyle" href="../panel/css/material-dashboard.css?v=3.2.0" rel="stylesheet" />
 </head>
-<body>
-    @if (!Model.Any())
-    {
-        <h1>کاربری یافت نشد</h1>
-    }
-    else
-    {
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>UserName</th>
-                    <th>Email</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="RoleTableBody">
-                @foreach (var url in Model)
-                {
-                    <tr id="row-@url.Id" data-id="@url.Id">
-                        <td>@url.UserName</td>
-                        <td>@url.Email</td>
-                        <td class="action-cell">
-                            <input type="hidden" value="@url.Id" class="url-id" />
-                            <a asp-controller="ManageUser" asp-action="AddUserToRole" asp-route-id="@url.Id"
-                               class="icon-buttonPluse" title="Add Role"><i class="far fa-cog">+</a>
-                            <span class="separator">|</span> <!-- Separator -->
-                            <a asp-controller="ManageUser" asp-action="RemoveUserFromRole" asp-route-id="@url.Id"
-                               class="icon-button" title="Remove User From Role"><i class="far fa-cog">x</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
 
-        <form method="post" asp-controller="ManageUser" asp-action="RemoveUserFromRole" id="deleteUrlForm">
-            @Html.AntiForgeryToken()
-        </form>
+<body class="g-sidenav-show bg-gray-100">
+    <aside class="sidenav navbar navbar-vertical navbar-expand-xs border-radius-lg fixed-start ms-2 bg-white my-2" id="sidenav-main">
+        @await Component.InvokeAsync("Navbar")
+    </aside>
+    <main class="main-content position-relative max-height-vh-100 h-100 border-radius-lg">
+        <!-- Navbar -->
+        <nav class="navbar navbar-main navbar-expand-lg px-0 mx-3 shadow-none border-radius-xl" id="navbarBlur" data-scroll="true">
+            <div class="container-fluid py-1 px-3">
+                <nav aria-label="breadcrumb">
+                    <ol class="breadcrumb bg-transparent mb-0 pb-0 pt-1 px-0 me-sm-6 me-5">
+                    </ol>
+                </nav>
+                <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4" id="navbar">
+                    <div class="ms-md-auto pe-md-3 d-flex align-items-center">
+                        <div class="input-group input-group-outline">
+                        </div>
+                    </div>
+                    <ul class="navbar-nav d-flex align-items-center justify-content-end">
+                        <li class="nav-item d-flex align-items-center">
+                            <a href="../panel/pages/sign-in.html" class="nav-link text-body font-weight-bold px-0">
+                                @*<i class="material-symbols-rounded">account_circle</i>*@
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <!-- End Navbar -->
 
-        <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+        <div class="container-fluid py-2">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card my-4">
+                        <div class="card-header p-0 position-relative mt-n4 mx-3 z-index-2">
+                            <div class="bg-gradient-dark shadow-dark border-radius-lg pt-4 pb-3">
+                                <h6 class="text-white text-capitalize ps-3">Add Role</h6>
+                            </div>
+                        </div>
 
-        <script>
-            function replaceEmptyCells() {
-                const cells = document.querySelectorAll('#RoleTableBody td');
-                cells.forEach(cell => {
-                    if (cell.textContent.trim() === '') {
-                        cell.textContent = '-';
-                        cell.classList.add('empty-cell');
-                    }
-                });
+                        <div class="card-body px-0 pb-2">
+                            <div class="table-responsive p-0">
+                                @if (!Model.Any())
+                                {
+                                    <div class="text-center mt-4">
+                                        <a href="/admin/MangeRole/AddRole" class="btn" style="background-image: linear-gradient(195deg, #d3d6ee 0%, #07115cd1 100%);  padding: 10px 15px; text-decoration: none; display: inline-flex; align-items: center; color: #ffffff; font-weight: bold; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);">
+                                            <i class="fas fa-plus-circle" style="margin-right: 8px; font-size: 24px; color: #ffffff;"></i> Add user
+                                        </a>
+                                    </div>
+                                }
+                                else
+                                {
+                                    <form asp-controller="ManageUser"  method="post">
+                                        <table class="table align-items-center mb-0">
+                                            <thead>
+                                                <tr>
+                                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Name</th>
+                                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">Email</th>
+                                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7"></th>
+                                                    <th class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">Action</th>
+                                                    <th class="text-secondary opacity-7"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="RoleTableBody">
+                                                @foreach (var url in Model)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            <div class="d-flex px-2 py-1">
+                                                                <div class="d-flex flex-column justify-content-center">
+                                                                    <p class="text-xs text-secondary mb-0">@url.UserName </p>
+                                                                </div>
+                                                            </div>
+                                                        <td>
+                                                            <div class="d-flex px-2 py-1">
+                                                                <div class="d-flex flex-column justify-content-center">
+                                                                    <p class="text-xs text-secondary mb-0">@url.Email </p>
+                                                                </div>
+                                                            </div>
+                                                        </td>
+                                                        </td>
+                                                        <td></td>
+                                                        <td class="align-middle text-center text-sm"></td>
+                                                        <td class="align-middle text-center">
+                                                            <a href="javascript:void(0);" onclick="deleteRole('@url.Id')" class="text-danger font-weight-bold text-xs" title="Delete Role">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </td>
+                                                    @*    <td class="align-middle text-center">
+                                                            <a href="javascript:void(0);" onclick="deleteRole('@url.Id')" class="text-danger font-weight-bold text-xs" title="Delete Role">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>
+                                                        </td>*@
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+    <!-- Core JS Files -->
+    <script src="../panel/js/core/popper.min.js"></script>
+    <script src="../panel/js/core/bootstrap.min.js"></script>
+    <script src="../panel/js/plugins/perfect-scrollbar.min.js"></script>
+    <script src="../panel/js/plugins/smooth-scrollbar.min.js"></script>
+    <script>
+        var win = navigator.platform.indexOf('Win') > -1;
+        if (win && document.querySelector('#sidenav-scrollbar')) {
+            var options = {
+                damping: '0.5'
             }
-
-            document.addEventListener('DOMContentLoaded', replaceEmptyCells);
-            // بررسی وضعیت خروج در تمام تب‌ها
-            if (sessionStorage.getItem('isLoggedOut') === 'true') {
-                window.location.href = '/Account/Login'; // هدایت به صفحه لاگین
+            Scrollbar.init(document.querySelector('#sidenav-scrollbar'), options);
+        }
+    </script>
+    <script>
+        function deleteRole(roleId) {
+            if (confirm('Are you sure you want to delete this role?')) {
+                var form = document.createElement('form');
+                form.method = 'post';
+                form.action = '/admin/MangeRole/DeleteRole';
+                var antiForgeryToken = document.createElement('input');
+                antiForgeryToken.type = 'hidden';
+                antiForgeryToken.name = '__RequestVerificationToken';
+                antiForgeryToken.value = document.querySelector('input[name="__RequestVerificationToken"]').value;
+                form.appendChild(antiForgeryToken);
+                var input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'id';
+                input.value = roleId;
+                form.appendChild(input);
+                document.body.appendChild(form);
+                form.submit();
             }
+        }
+    </script>
+    <script>
+        // وقتی تغییر در Local Storage رخ دهد، این رویداد اجرا می‌شود
+        window.addEventListener('storage', function (event) {
+            if (event.key === 'isLoggedOut' && event.newValue === 'true') {
+                // هدایت کاربر به صفحه لاگین در صورت خروج از سیستم
+                window.location.href = '/Account/Login';
+            }
+        });
 
-            // حذف کلید هنگام بارگذاری صفحه و ورود دوباره کاربر
-            window.addEventListener("load", function () {
-                sessionStorage.removeItem('isLoggedOut');
-            });
-        </script>
-  
-    
-    }
+        // پاک کردن وضعیت خروج از Local Storage پس از ورود دوباره
+        window.addEventListener("load", function () {
+            localStorage.removeItem('isLoggedOut');
+        });
+    </script>
+
+
 </body>
+
 </html>

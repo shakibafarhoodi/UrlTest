@@ -6,7 +6,7 @@
     @if (ViewBag.HasAccess == null)
     {
         <div class="alert alert-warning">
-            <p> <a asp-action="Login" asp-controller="Account">  Access status is unknown. Please try logging in.</a></p>
+            <p> <a asp-action="Login" asp-controller="Account" style="font-family:Exo">  Access status is unknown. Please try logging in.</a></p>
         </div>
     }
     else if (hasAccess)
@@ -14,12 +14,12 @@
         <div class="alert alert-success">
             You have access to this site.
         </div>
-        <p><a asp-action="Login" asp-controller="Account">Login to the website</a></p>
+        <p><a asp-action="Login" asp-controller="Account" style="font-family:Ex">Login to the website"</a></p>
     }
     else
     {
         <div class="alert alert-danger">
-            <p><a asp-action="Login" asp-controller="Account">  You do not have access to this site. Please log in.</a></p>
+            <p><a asp-action="Login" asp-controller="Account" style="font-family:Ex">  You do not have access to this site. Please log in.</a></p>
         </div>
     }
 </div>

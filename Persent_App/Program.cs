@@ -1,5 +1,4 @@
 ﻿using Data.PnsContext;
-using Domin.Model;
 using IOC;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

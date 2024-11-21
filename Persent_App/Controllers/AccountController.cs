@@ -42,6 +42,7 @@ namespace Persent_App.Controllers
         [HttpGet]
         public IActionResult AccessDenied()
         
+        
         {
             return View();
         }
@@ -53,6 +54,7 @@ namespace Persent_App.Controllers
             return View();
         }
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Register(RegisterViewModel model)
         {
             if (!ModelState.IsValid)
@@ -100,6 +102,7 @@ namespace Persent_App.Controllers
 
         [HttpGet]
         public IActionResult Login()
+        
         {
             return View();
 
@@ -196,12 +199,17 @@ namespace Persent_App.Controllers
                 {
                     return RedirectToAction("CreateUrl", "Url"); // به صفحه‌ی مخصوص کاربران هدایت شود
                 }
-                else if (roles.Contains("admin") && roles.Contains("user")) 
+                else if (roles.Contains("admin") && roles.Contains("user"))
                 {
                     return RedirectToAction("Index", "Dashboard", new { area = "admin" });
 
                 }
-                return RedirectToAction("Login", "Account");
+                else
+                {
+                    return RedirectToAction("AccessDenied", "Account");
+
+                }
+                //return RedirectToAction("Login", "Account");
             }
             else
             {

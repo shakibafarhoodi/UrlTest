@@ -63,16 +63,12 @@
                                 <h6 class="text-white text-capitalize ps-3">Add Role</h6>
                             </div>
                         </div>
-                        <div class="p-3">
-                            <form asp-action="AddNewRole" method="post" class="d-flex align-items-center justify-content-start" style=" padding: 12px; border-radius: 0px; ">
-                                <div class="input-group me-3">
-                                    <input type="text" name="roleName" class="form-control" placeholder="Enter role name" required style="border: 1px solid #b3b3b3; border-radius: 6px; padding: 14px;" />
-                                </div>
-                                <button type="submit" class="btn bg-gradient-dark" style="background-image: linear-gradient(195deg, #07115cd1 0%, #d3d6ee 100%); padding: 10px 20px; margin: 0 auto;">
-                                    <i class="fas fa-plus-circle"></i>
-                                </button>
-                            </form>
+                        <div class="text-center mt-4">
+                            <a asp-area="admin" asp-controller="MangeRole" asp-action="AddRole" class="btn" style="padding: 10px; margin-bottom: 10px;">
+                                <i class="fas fa-plus-circle" style="font-size: 24px;"></i> Add Role
+                            </a>
                         </div>
+
                         <div class="card-body px-0 pb-2">
                             <div class="table-responsive p-0">
                                 @if (!Model.Any())
@@ -110,14 +106,17 @@
                                                         <td></td>
                                                         <td class="align-middle text-center text-sm"></td>
                                                         <td class="align-middle text-center">
-                                                            <a asp-area="admin" asp-controller="MangeRole" asp-action="AddRole" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip">
+                                                          @*  <a asp-area="admin" asp-controller="MangeRole" asp-action="AddRole" class="text-secondary font-weight-bold text-xs" data-toggle="tooltip">
                                                                 Add
-                                                            </a>
-                                                        </td>
-                                                        <td class="align-middle text-center">
+                                                            </a>*@
                                                             <a href="javascript:void(0);" onclick="deleteRole('@url.Id')" class="text-danger font-weight-bold text-xs" title="Delete Role">
                                                                 <i class="fa fa-trash"></i>
                                                             </a>
+                                                        </td>
+                                                        <td class="align-middle text-center">
+                                                          @*  <a href="javascript:void(0);" onclick="deleteRole('@url.Id')" class="text-danger font-weight-bold text-xs" title="Delete Role">
+                                                                <i class="fa fa-trash"></i>
+                                                            </a>*@
                                                         </td>
                                                     </tr>
                                                 }
@@ -182,6 +181,7 @@
             localStorage.removeItem('isLoggedOut');
         });
     </script>
+
 
 </body>
 

@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace Persent_App.Areas.admin.Controllers
 {
     [Area("admin")]
-
+    [Authorize(Roles = "admin")]
     public class DashboardController : Controller
     {
         [HttpGet]

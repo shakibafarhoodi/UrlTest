@@ -143,5 +143,20 @@ namespace Persent_App.Areas.admin.Controllers
 
             return RedirectToAction("Index");
         }
+        public IActionResult GetAllUser()
+        {
+
+            var model = _userManager.Users
+                .Select(u => new ManageUserViewModel()
+                {
+                    Id = u.Id,
+                    UserName = u.UserName,
+                    Email = u.Email,
+
+
+                }).ToList();
+
+            return View(model);
+        }
     }
 }

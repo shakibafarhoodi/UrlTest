@@ -8,7 +8,6 @@
 
 <html lang="en">
 <head>
-    <title>Login 10</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
@@ -31,38 +30,47 @@
             <div class="row justify-content-center">
                 <div class="col-md-6 col-lg-4">
                     <div class="login-wrap p-0">
+
+                    @* نمایش پیام موفقیت با استفاده از ViewBag.IsSent *@
+                    @if (ViewBag.IsSent == true)
+                    {
+                                    <div class="alert alert-success text-center" style="font-family:Exo">
+                                   "Your registration was successful! Please check your email to activate your account."
+
+                                </div>
+                    }
+
                         <h3 class="mb-4 text-center"></h3>
                             <form asp-action="Register" asp-controller="Account" method="post">
-                                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        @Html.AntiForgeryToken()
 
+                                    <div asp-validation-summary="ModelOnly" class="text-danger" ></div>
                             </br>
                             <div class="form-group">
-                                <input type="text" style="font-family:Samim" asp-for="UserName" class="form-control" name="UserName" placeholder="Username" required>
+                                <input type="text" style="font-family:Samim" asp-for="UserName" style="font-family:Exo" class="form-control" name="UserName" placeholder="Username" required>
                             </div>
                                 <div class="form-group">
-                                <input type="text" style="font-family:Samim" asp-for="Email" class="form-control" name="Email" placeholder="Email" required>
+                                <input type="text" style="font-family:Samim" asp-for="Email" style="font-family:Exo" class="form-control" name="Email" placeholder="Email" required>
                             </div>
                             <div class="form-group">
-                                <input id="password-field" asp-for="Password" type="password" class="form-control" placeholder="Password" required>
+                                <input id="password-field" asp-for="Password" type="password" style="font-family:Exo"class="form-control" placeholder="Password" required>
                                 <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                             </div>
                                 <div class="form-group">
-                                <input id="password-field" asp-for="Repassword" type="password" class="form-control" placeholder="Repassword" required>
+                                <input id="password-field" asp-for="Repassword" type="password" style="font-family:Exo" class="form-control" placeholder="Repassword" required>
                                 <span toggle="#password-field" class="fa fa-fw fa-eye field-icon toggle-password"></span>
                             </div>
                             <div class="form-group">
                                 <button type="submit" value="Register" class="form-control btn btn-primary submit px-3">Sign In</button>
                             </div>
-                            @* <div class="form-group d-md-flex">
-                               <div class="w-50">
-                                    <label class="checkbox-wrap checkbox-primary">
-                                        Remember Me
-                                        <input type="checkbox" checked>
-                                        <span class="checkmark"></span>
-                                    </label>
+                          <div style="display: flex; justify-content: space-between;">
+                                <div class="w-50 text-md-right">
+                                    <a style="color: #fff; font-family:Exo;text-align:right" asp-action="" asp-controller=""></a>
                                 </div>
-                              
-                            </div>*@
+                                <div class="w-50 text-md-right">
+                                    <a style="color: #fff font-family:Exo" asp-action="Login" asp-controller="Account">Login</a>
+                                </div>
+                            </div>
                
                         </form>
                   
